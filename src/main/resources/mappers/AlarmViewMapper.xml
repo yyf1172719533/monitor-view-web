@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timain.monitor.mapper.AlarmViewMapper">
+
+    <select id="loadSheetDetailDataByDate" resultType="java.util.Map">
+        select b.spec_name as "specName", a.alarmregion as "cityName", SUM(a.stat_num) as "num"
+        from TA_ALARM_SPECGENERALSTAT a
+           , tr_net_spec b
+           , tab_city c
+        where a.specialty = b.spec_id
+          and a.alarmregion = c.city_name
+          and a.specialty = #{y_id}
+          and a.column_name = #{x_id}
+          and a.stat_time >= ${startTime}
+          and <![CDATA[a.stat_time < ${endTime}]]>
+          and city_layer = 2
+          and (city_id in (select res_id from tab_res_area where res_type = 1 and area_id = #{areaId})
+            or parent_id in (select res_id from tab_res_area where res_type = 1 and area_id = #{areaId}))
+        group by b.spec_name, a.alarmregion
+    </select>
+
+    <select id="getAreaRegionList" resultType="com.timain.monitor.pojo.vo.CityVo">
+        select city_id as cityId, city_name as cityName, city_layer as cityLayer
+        from tab_city
+        where city_id in (select res_id from tab_res_area where res_type = 1 and area_id = #{areaId})
+          and is_szx = 0
+    </select>
+
+    <select id="loadSpecCityAlarmStat" resultType="java.util.Map">
+        select a.specialty as "rowId", nvl2(b.city_id, b.city_id, a.alarmregion) as "columnId", sum(num) as "num"
+        from TA_ALARM_SPECCITYSTAT a
+                 left join tab_city b on a.alarmregion = b.city_name
+        group by a.specialty, nvl2(b.city_id, b.city_id, a.alarmregion)
+    </select>
+
+    <select id="findCountNum" resultType="java.lang.Integer">
+        <![CDATA[
+        select count(1)
+        from (select *
+              from ta_fault_dispatch t,
+                   ta_realalarm a
+              where a.equipmentclass in ('CELL', 'UTRANCELL', 'EUTRANCELL')
+                and t.serialno = a.alarmuniqueid
+                and a.parentflag <> 1
+                and a.locatenestatus = 2
+                and a.specialty = 5
+                and a.daltime > #{beginTime}
+                and a.daltime < #{endTime}
+              union all
+              select *
+              from ta_fault_dispatch t,
+                   ${table} a
+              where a.equipmentclass in ('CELL', 'UTRANCELL', 'EUTRANCELL')
+                and t.serialno = a.alarmuniqueid
+                and a.parentflag <> 1
+                and a.locatenestatus = 2
+                and a.specialty = 5
+                and a.daltime > #{beginTime}
+                and a.daltime < #{endTime})
+        ]]>
+    </select>
+
+    <select id="loadSpecGeneralAlarmStatByDate" resultType="java.util.Map">
+        select specialty as "rowId", column_name as "columnId", SUM(stat_num) as "num"
+        from TA_ALARM_SPECGENERALSTAT a,
+             tab_city b
+        where a.alarmregion = b.city_name
+          and stat_time >= ${startTime}
+          and <![CDATA[stat_time < ${endTime}]]>
+          and city_layer = 2
+          and (city_id in (select res_id from tab_res_area where res_type = 1 and area_id = #{areaId})
+            or parent_id in (select res_id from tab_res_area where res_type = 1 and area_id = #{areaId}))
+        group by specialty, column_name
+        union all
+        select specialty as "rowId", column_name as "columnId", sum(stat_num) as "num"
+        from TA_ALARM_SPECGENERALSTAT a,
+             tab_city b
+        where a.alarmregion = b.city_name
+          and column_name = 'res_count'
+          and city_layer = 2
+          and (city_id in (select res_id from tab_res_area where res_type = 1 and area_id = #{areaId})
+            or parent_id in (select res_id from tab_res_area where res_type = 1 and area_id = #{areaId}))
+        group by specialty, column_name
+    </select>
+</mapper>
