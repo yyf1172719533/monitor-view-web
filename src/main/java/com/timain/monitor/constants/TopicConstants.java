@@ -9,4 +9,6 @@ package com.timain.monitor.constants;
 public interface TopicConstants {
 
     String SHEET_STAT = "/Alarm/Abims/SheetStat/SheetStatistic_Test";
+
+    String SHEET_LIST_STAT = "/Alarm/Abims/SheetStat/SheetlistStatistic";
 }

@@ -1,15 +1,19 @@
 package com.timain.monitor.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.timain.monitor.constants.AlarmOverviewColumn;
 import com.timain.monitor.constants.Columns;
-import com.timain.monitor.constants.KeyConstants;
-import com.timain.monitor.context.LoginContext;
+import com.timain.monitor.constants.MonitorAlarmColumn;
 import com.timain.monitor.enums.ErrorEnum;
 import com.timain.monitor.exception.BusinessException;
 import com.timain.monitor.pojo.DataResult;
-import com.timain.monitor.pojo.dto.TimeDto;
+import com.timain.monitor.pojo.dto.AlarmDetailDto;
+import com.timain.monitor.pojo.dto.AlarmViewDto;
+import com.timain.monitor.pojo.dto.QueryDetailDto;
 import com.timain.monitor.service.AlarmViewService;
 import com.timain.monitor.utils.ExportUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +22,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author yyf
  * @version 1.0
  * @date 2022/11/3 11:50
  */
+@Api(description = "告警窗口接口管理")
 @RestController
 @RequestMapping("alarmView")
 public class AlarmViewController {
@@ -34,35 +38,70 @@ public class AlarmViewController {
     @Autowired
     private AlarmViewService alarmViewService;
 
+    /**
+     * 告警窗口页面数据查询
+     * @param dto 查询参数
+     * @return 全专业告警概况表[当日告警]、全省各地市监控告警统计列表[活动全部]
+     */
+    @ApiOperation("告警窗口页面数据查询")
     @PostMapping("querySpecGeneralAlarmStatByDate")
-    public DataResult querySpecGeneralAlarmStatByDate(Map<String, Object> params) {
-
-        return null;
+    public DataResult querySpecGeneralAlarmStatByDate(@RequestBody AlarmViewDto dto) {
+        Map<String, Object> params = BeanUtil.beanToMap(dto);
+        return DataResult.buildSuccess("查询成功", alarmViewService.loadSpecGeneralAlarmStatByDate(params));
     }
 
-    @PostMapping("loadSheetDetailDataByDate")
-    public DataResult loadSheetDetailDataByDate(Map<String, Object> params) {
-        return DataResult.buildSuccess("查询成功", alarmViewService.loadSheetDetailDataByDate(params));
+    @ApiOperation("已派发工单数、在途工单数、已关闭工单数等工单统计明细查看")
+    @PostMapping("querySheetDetailDataByDate")
+    public DataResult querySheetDetailDataByDate(@RequestBody AlarmDetailDto dto) {
+        return DataResult.buildSuccess("查询成功", alarmViewService.loadSheetDetailDataByDate(dto));
+    }
+
+    @ApiOperation("根据属地查询工单详情信息")
+    @PostMapping("querySheetDetailInfo")
+    public DataResult querySheetDetailInfo(@RequestBody QueryDetailDto dto) {
+        try {
+            return DataResult.buildSuccess("查询成功", alarmViewService.queryDetailInfo(dto));
+        } catch (Exception e) {
+            LOGGER.error("查询工单详情信息失败：{}", e.getMessage());
+            throw new BusinessException(ErrorEnum.QUERY_ALARM_DETAIL_INFO_ERROR);
+        }
     }
 
     /**
      * 导出全专业告警概况表
      * @param dto 查询参数
+     * @param response response
      */
+    @ApiOperation("导出全专业告警概况表")
     @PostMapping("exportAlarmOverview")
-    public void exportAlarmOverview(@RequestBody TimeDto dto,  HttpServletResponse response) {
-        Object areaId = LoginContext.get(KeyConstants.AREA_ID);
-        if (Objects.isNull(areaId)) {
-            throw new BusinessException(ErrorEnum.LACK_PARAM);
-        }
+    public void exportAlarmOverview(@RequestBody AlarmViewDto dto, HttpServletResponse response) {
         List<Map<String, Object>> dataList;
         Columns columns = new AlarmOverviewColumn();
         try {
-            dataList = alarmViewService.queryAlarmOverview(dto, String.valueOf(areaId));
+            dataList = alarmViewService.queryAlarmOverview(dto);
             ExportUtil.downloadExcel(columns.getFileName(), columns.getTitles(), columns.getColumns(), dataList, response);
         } catch (Exception e) {
             LOGGER.error("export alarmOverview data error: {}", e.getMessage());
             throw new BusinessException(ErrorEnum.EXPORT_ALARM_OVERVIEW_ERROR);
+        }
+    }
+
+    /**
+     * 导出全省各地市监控告警统计列表
+     * @param dto 查询参数
+     * @param response response
+     */
+    @ApiOperation("导出全省各地市监控告警统计列表")
+    @PostMapping("exportMonitorAlarmCityInfo")
+    public void exportMonitorAlarmCityInfo(@RequestBody AlarmViewDto dto, HttpServletResponse response) {
+        List<Map<String, Object>> dataList;
+        Columns columns = new MonitorAlarmColumn();
+        try {
+            dataList = alarmViewService.queryMonitorAlarm(dto);
+            ExportUtil.downloadExcel(columns.getFileName(), columns.getTitles(), columns.getColumns(), dataList, response);
+        } catch (Exception e) {
+            LOGGER.error("export monitorAlarmCity data error: {}", e.getMessage());
+            throw new BusinessException(ErrorEnum.EXPORT_MONITOR_ALARM_CITY_ERROR);
         }
     }
 }

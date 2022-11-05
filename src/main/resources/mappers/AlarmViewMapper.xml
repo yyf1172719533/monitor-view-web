@@ -9,8 +9,8 @@
            , tab_city c
         where a.specialty = b.spec_id
           and a.alarmregion = c.city_name
-          and a.specialty = #{y_id}
-          and a.column_name = #{x_id}
+          and a.specialty = #{yId}
+          and a.column_name = #{xId}
           and a.stat_time >= ${startTime}
           and <![CDATA[a.stat_time < ${endTime}]]>
           and city_layer = 2

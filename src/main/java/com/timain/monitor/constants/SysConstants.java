@@ -13,23 +13,29 @@ public final class SysConstants {
 
     public static final String USER_KEY = "session_userinfo";
 
-    public static final Map<String, String> SPECIDTONAMEMAP = new HashMap<>(16);
+    public static final Map<String, String> SPEC_ID_TO_NAME_MAP = new HashMap<>(16);
+
+    public static final Map<String, String> SHEET_MAP = new HashMap<>(16);
 
     static {
-        SPECIDTONAMEMAP.put("1", "移动核心网");
-        SPECIDTONAMEMAP.put("2", "IP互联网");
-        SPECIDTONAMEMAP.put("3", "传输网");
-        SPECIDTONAMEMAP.put("4", "动力环境");
-        SPECIDTONAMEMAP.put("5", "无线网");
-        SPECIDTONAMEMAP.put("6", "固定交换网");
-        SPECIDTONAMEMAP.put("7", "IP承载网");
-        SPECIDTONAMEMAP.put("8", "接入网");
-        SPECIDTONAMEMAP.put("9", "ATM");
-        SPECIDTONAMEMAP.put("10", "网管系统");
-        SPECIDTONAMEMAP.put("11", "业务平台");
-        SPECIDTONAMEMAP.put("12", "大客户");
-        SPECIDTONAMEMAP.put("13", "光缆监测");
-        SPECIDTONAMEMAP.put("14", "铁塔动环");
-        SPECIDTONAMEMAP.put("15", "IPTV");
+        SPEC_ID_TO_NAME_MAP.put("1", "移动核心网");
+        SPEC_ID_TO_NAME_MAP.put("2", "IP互联网");
+        SPEC_ID_TO_NAME_MAP.put("3", "传输网");
+        SPEC_ID_TO_NAME_MAP.put("4", "动力环境");
+        SPEC_ID_TO_NAME_MAP.put("5", "无线网");
+        SPEC_ID_TO_NAME_MAP.put("6", "固定交换网");
+        SPEC_ID_TO_NAME_MAP.put("7", "IP承载网");
+        SPEC_ID_TO_NAME_MAP.put("8", "接入网");
+        SPEC_ID_TO_NAME_MAP.put("9", "ATM");
+        SPEC_ID_TO_NAME_MAP.put("10", "网管系统");
+        SPEC_ID_TO_NAME_MAP.put("11", "业务平台");
+        SPEC_ID_TO_NAME_MAP.put("12", "大客户");
+        SPEC_ID_TO_NAME_MAP.put("13", "光缆监测");
+        SPEC_ID_TO_NAME_MAP.put("14", "铁塔动环");
+        SPEC_ID_TO_NAME_MAP.put("15", "IPTV");
+
+        SHEET_MAP.put(KeyConstants.CLOSEED_SHEET_COUNT, KeyConstants.CLOSEED_SHEET_COUNT);
+        SHEET_MAP.put(KeyConstants.DISPATCHED_SHEET_COUNT, KeyConstants.DISPATCHED_SHEET_COUNT);
+        SHEET_MAP.put(KeyConstants.PROCESSING_SHEET_COUNT, KeyConstants.PROCESSING_SHEET_COUNT);
     }
 }

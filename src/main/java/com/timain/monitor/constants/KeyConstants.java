@@ -110,4 +110,27 @@ public interface KeyConstants {
     String LOCATED_ALARM_COUNT = "located_alarm_count";
 
     String RELATED_ALARM_COUNT = "related_alarm_count";
+
+    String ACTIVE_ALARM = "activealarm";
+
+    String SHEET_ALARM = "sheetalarm";
+
+    String KEY_00 = "00";
+    String KEY_01 = "01";
+    String KEY_02 = "02";
+    String KEY_03 = "03";
+    String KEY_04 = "04";
+    String KEY_05 = "05";
+    String KEY_06 = "06";
+    String KEY_07 = "07";
+    String KEY_08 = "08";
+    String KEY_09 = "09";
+    String KEY_10 = "10";
+    String KEY_11 = "11";
+    String KEY_12 = "12";
+    String KEY_13 = "13";
+    String KEY_14 = "14";
+    String KEY_15 = "15";
+    String KEY_16 = "16";
+    String KEY_17 = "17";
 }

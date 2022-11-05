@@ -11,7 +11,9 @@ public enum ErrorEnum {
     PARAM_ERROR(40002, "非法参数"),
     LACK_PARAM(40003, "缺少参数"),
     EXPORT_ALARM_OVERVIEW_ERROR(40004, "导出全专业告警概况表失败"),
-    TOPIC_MSG_ERROR(40005, "队列处理消息失败");
+    TOPIC_MSG_ERROR(40005, "队列处理消息失败"),
+    EXPORT_MONITOR_ALARM_CITY_ERROR(40005, "导出全省各地市监控告警统计列表失败"),
+    QUERY_ALARM_DETAIL_INFO_ERROR(40006, "查询工单详情信息失败");
 
     private final Integer code;
 

@@ -1,5 +1,6 @@
 package com.timain.monitor.config;
 
+import com.linkage.system.corbabus._CorbaBusAdpaterStub;
 import com.linkage.system.utils.corba.CorbaMsgSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,9 @@ public class BeanConfig {
 
     @Bean
     public CorbaMsgSupport corbaMsgSupport() {
-        return new CorbaMsgSupport();
+        CorbaMsgSupport corbaMsgSupport = new CorbaMsgSupport();
+        corbaMsgSupport.setCorbaBusAdpater(new _CorbaBusAdpaterStub());
+        corbaMsgSupport.setCharset("ISO8859-1");
+        return corbaMsgSupport;
     }
 }

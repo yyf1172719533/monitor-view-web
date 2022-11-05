@@ -49,7 +49,60 @@ public abstract class DataUtils {
         }
     }
 
-    public static void calculationData(List<Map<String, Object>> dataList) {
+    public static void calculationMonitorAlarmData(List<Map<String, Object>> dataList) {
+        long activeAlarm = 0L, sheetAlarm = 0L, city00 = 0L, city01 = 0L, city02 = 0L;
+        long city03 = 0L, city04 = 0L, city05 = 0L, city06 = 0L, city07 = 0L, city08 = 0L;
+        long city09 = 0L, city10 = 0L, city11 = 0L, city12 = 0L, city13 = 0L, city14 = 0L;
+        long city15 = 0L, city16 = 0L, city17 = 0L;
+        for (Map<String, Object> map : dataList) {
+            activeAlarm += calc(map, KeyConstants.ACTIVE_ALARM);
+            sheetAlarm += calc(map, KeyConstants.SHEET_ALARM);
+            city00 += calc(map, KeyConstants.KEY_00);
+            city01 += calc(map, KeyConstants.KEY_01);
+            city02 += calc(map, KeyConstants.KEY_02);
+            city03 += calc(map, KeyConstants.KEY_03);
+            city04 += calc(map, KeyConstants.KEY_04);
+            city05 += calc(map, KeyConstants.KEY_05);
+            city06 += calc(map, KeyConstants.KEY_06);
+            city07 += calc(map, KeyConstants.KEY_07);
+            city08 += calc(map, KeyConstants.KEY_08);
+            city09 += calc(map, KeyConstants.KEY_09);
+            city10 += calc(map, KeyConstants.KEY_10);
+            city11 += calc(map, KeyConstants.KEY_11);
+            city12 += calc(map, KeyConstants.KEY_12);
+            city13 += calc(map, KeyConstants.KEY_13);
+            city14 += calc(map, KeyConstants.KEY_14);
+            city15 += calc(map, KeyConstants.KEY_15);
+            city16 += calc(map, KeyConstants.KEY_16);
+            city17 += calc(map, KeyConstants.KEY_17);
+        }
+        Map<String, Object> totalMap = Maps.newHashMap();
+        totalMap.put(KeyConstants.SPEC_NAME, "总计");
+        totalMap.put(KeyConstants.ACTIVE_ALARM, activeAlarm);
+        totalMap.put(KeyConstants.SHEET_ALARM, sheetAlarm);
+        totalMap.put(KeyConstants.KEY_00, city00);
+        totalMap.put(KeyConstants.KEY_01, city01);
+        totalMap.put(KeyConstants.KEY_02, city02);
+        totalMap.put(KeyConstants.KEY_03, city03);
+        totalMap.put(KeyConstants.KEY_04, city04);
+        totalMap.put(KeyConstants.KEY_05, city05);
+        totalMap.put(KeyConstants.KEY_06, city06);
+        totalMap.put(KeyConstants.KEY_07, city07);
+        totalMap.put(KeyConstants.KEY_08, city08);
+        totalMap.put(KeyConstants.KEY_09, city09);
+        totalMap.put(KeyConstants.KEY_10, city10);
+        totalMap.put(KeyConstants.KEY_11, city11);
+        totalMap.put(KeyConstants.KEY_12, city12);
+        totalMap.put(KeyConstants.KEY_13, city13);
+        totalMap.put(KeyConstants.KEY_14, city14);
+        totalMap.put(KeyConstants.KEY_15, city15);
+        totalMap.put(KeyConstants.KEY_16, city16);
+        totalMap.put(KeyConstants.KEY_17, city17);
+
+        dataList.add(totalMap);
+    }
+
+    public static void calculationAlarmOverviewData(List<Map<String, Object>> dataList) {
         long resCount = 0L;
         long alarmBeforeCompressCount = 0L;
         long alarmCount = 0L;

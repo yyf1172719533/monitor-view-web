@@ -1,6 +1,8 @@
 package com.timain.monitor.service;
 
-import com.timain.monitor.pojo.dto.TimeDto;
+import com.timain.monitor.pojo.dto.AlarmDetailDto;
+import com.timain.monitor.pojo.dto.AlarmViewDto;
+import com.timain.monitor.pojo.dto.QueryDetailDto;
 
 import java.util.List;
 import java.util.Map;
@@ -20,18 +22,24 @@ public interface AlarmViewService {
 
     /**
      * 查询工单统计明细
-     * @param params 查询参数
+     * @param dto 查询参数
      * @return 工单统计明细
      */
-    List<Map<String,String>> loadSheetDetailDataByDate(Map<String, Object> params);
+    List<Map<String,String>> loadSheetDetailDataByDate(AlarmDetailDto dto);
 
     /**
      * 查询所有全专业告警概况信息
      * @param dto 查询参数
-     * @param areaId 地区
      * @return 告警概况信息
      */
-    List<Map<String, Object>> queryAlarmOverview(TimeDto dto, String areaId);
+    List<Map<String, Object>> queryAlarmOverview(AlarmViewDto dto);
+
+    /**
+     * 查询所有全省各地市监控告警统计列表
+     * @param dto 查询参数
+     * @return 全省各地市监控告警统计列表
+     */
+    List<Map<String, Object>> queryMonitorAlarm(AlarmViewDto dto);
 
     /**
      * 加载工单统计数据
@@ -55,6 +63,14 @@ public interface AlarmViewService {
     List<Map<String, Object>> querySpecGeneralStat(Map<String, Map<String, Object>> params);
 
     /**
+     * 查询工单详情信息
+     * @param dto 查询参数
+     * @return 工单详情信息
+     * @throws Exception
+     */
+    List<Map<String, Object>> queryDetailInfo(QueryDetailDto dto) throws Exception;
+
+    /**
      * 填充0
      * @param dataList 数据
      */
@@ -69,8 +85,9 @@ public interface AlarmViewService {
     /**
      * 统计
      * @param dataList 数据
+     * @param flag 标识
      */
-    void setTotalData(List<Map<String, Object>> dataList);
+    void setTotalData(List<Map<String, Object>> dataList, boolean flag);
 
     /**
      * 无线网小区自动派单的告警统计SQL（去掉子告警和工程告警）
