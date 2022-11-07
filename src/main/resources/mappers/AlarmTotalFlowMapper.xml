@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timain.monitor.mapper.AlarmTotalFlowMapper">
+
+    <select id="selectSpecList" resultType="com.timain.monitor.pojo.vo.SpecVo">
+        select spec_id    as specId,
+               spec_id_ex as specIdEx,
+               spec_name  as specName
+        from tr_net_spec
+    </select>
+
+    <select id="selectUserViewByViewId" resultType="java.util.Map">
+        select view_id          as "view_id",
+               monitor_viewname as "monitor_viewname",
+               creator          as "creator",
+               view_name        as "view_name",
+               windownum        as "windownum"
+        from ta_viewdef
+        where monitor_viewname = #{moduleKey}
+          and view_id = #{viewId}
+    </select>
+
+    <select id="selectUserViewByAccount" resultType="java.util.Map">
+        select a.view_id          as "view_id",
+               b.monitor_viewname as "monitor_viewname",
+               b.creator          as "creator",
+               b.view_name        as "view_name",
+               b.windownum        as "windownum"
+        from ta_viewchoose a,
+             ta_viewdef b
+        where a.view_id = b.view_id
+          and a.monitor_viewname = #{moduleKey}
+          and acc_loginname = #{account}
+    </select>
+
+    <select id="selectUserView" resultType="java.util.Map">
+        select view_id          as "view_id",
+               monitor_viewname as "monitor_viewname",
+               creator          as "creator",
+               view_name        as "view_name",
+               windownum        as "windownum"
+        from ta_viewdef
+        where monitor_viewname = #{moduleKey}
+          and (creator = #{account} or ispublic = 1 or creator = '-1')
+    </select>
+
+    <select id="selectMenuConfig" resultType="java.util.Map">
+        select a.item_id      as "item_id",
+               a.item_name    as "item_name",
+               a.item_url     as "item_url",
+               a.item_accept  as "item_accept",
+               a.item_type    as "item_type",
+               a.item_picname as "item_picname",
+               a.ismulti      as "ismulti",
+               a.updateatrr   as "updateatrr"
+        from ta_viewmoperitem a,
+             ta_moduleitem b,
+             ta_role_modlitem c
+        where c.monitor_viewname = b.monitor_viewname
+          and c.item_id = b.item_id
+          and a.item_id = b.item_id
+          and c.monitor_viewname = #{moduleKey}
+          and c.role_id = #{roleId}
+        order by a.item_order
+    </select>
+
+    <select id="selectVoiceConfig" resultType="com.timain.monitor.pojo.vo.VoiceVo">
+        select acc_loginname  as accLoginname,
+               alarmseverity  as severity,
+               path           as path,
+               descr          as descr,
+               uploadfilename as fileName
+        from ta_voiceconf
+        where acc_loginname = #{account}
+          and soundflg = 1
+    </select>
+
+    <select id="selectUserViewWin" resultType="java.util.Map">
+        select window_id        as "window_id",
+               window_name      as "window_name",
+               window_uniquekey as "window_uniquekey",
+               childviewname    as "childviewname",
+               window_x         as "window_x",
+               window_y         as "window_y",
+               window_w         as "window_w",
+               window_h         as "window_h",
+               window_depth     as "window_depth",
+               load_custalarm   as "load_custalarms"
+        from ta_viewwindef
+        where view_id = #{viewId}
+          and window_enable = 1
+        order by window_id
+    </select>
+
+    <select id="selectChildWin" resultType="java.util.Map">
+        select childwinkey as "childwinkey", childwinname as "childwinname"
+        from ta_modchildwintype
+        where monitor_viewname = #{moduleKey}
+    </select>
+
+    <select id="selectViewWinStateConf" resultType="java.util.Map">
+        select window_id      as "window_id",
+               sequence       as "sequence",
+               a.state_enname as "state_enname",
+               c.state_desc   as "state_chname",
+               c.state_value  as "state_value",
+               c.state_pic    as "state_pic"
+        from ta_state_usrdef a,
+             ta_statecolumn b,
+             ta_statecolumndesc c
+        where a.state_enname = b.state_enname
+          and a.state_enname = c.state_enname
+          and view_id = #{viewId}
+        order by window_id, sequence
+    </select>
+
+    <select id="selectViewWinToolsConf" resultType="java.util.Map">
+        select window_id        as "window_id",
+               sequence         as "sequence",
+               a.toolbar_enname as "toolbar_enname",
+               b.toolbar_chname as "toolbar_chname"
+        from ta_toolbardef a,
+             ta_toobar b
+        where a.toolbar_enname = b.toolbar_enname
+          and view_id = #{viewId}
+        order by window_id, sequence
+    </select>
+
+    <select id="selectViewWinColumnConf" resultType="java.util.Map">
+        select window_id          as "window_id",
+               sequence           as "sequence",
+               b.field_name       as "field_name",
+               field_desc         as "field_desc",
+               a.usetype          as "usetype",
+               a.monitor_viewname as "monitor_viewname"
+        from ta_displaycolumn a,
+             ta_itemcolumn b
+        where a.field_name = b.field_name
+          and a.monitor_viewname = b.monitor_viewname
+          and a.usetype = b.usetype
+          and view_id = #{viewId}
+          and a.monitor_viewname = #{moduleKey}
+        order by window_id, sequence
+    </select>
+
+    <select id="selectCity" resultType="java.util.Map">
+        select ct.city_id as "city_id",
+               ct.city_name as "city_name",
+               ct.city_layer as "city_layer"
+        from tab_res_area ra,
+             tab_city ct
+        where ra.res_type = 1
+          and ra.res_id = ct.city_id
+          and ra.area_id = #{areaId}
+        order by city_layer
+    </select>
+</mapper>

@@ -13,6 +13,8 @@ public final class SysConstants {
 
     public static final String USER_KEY = "session_userinfo";
 
+    public static final String VOICE_RESOURCE_PATH = "system.resource.warn-voice.voicedir";
+
     public static final Map<String, String> SPEC_ID_TO_NAME_MAP = new HashMap<>(16);
 
     public static final Map<String, String> SHEET_MAP = new HashMap<>(16);

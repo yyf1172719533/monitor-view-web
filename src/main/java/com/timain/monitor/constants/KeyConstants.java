@@ -133,4 +133,78 @@ public interface KeyConstants {
     String KEY_15 = "15";
     String KEY_16 = "16";
     String KEY_17 = "17";
+
+    String CREATOR = "creator";
+
+    String DEFAULT_CREATOR = "-1";
+
+    String VIEW_ID = "view_id";
+
+    String VIEW_NAME = "view_name";
+
+    String MONITOR_VIEW_NAME = "monitor_viewname";
+
+    String WINDOW_NUM = "windownum";
+
+    String ITEM_NAME = "item_name";
+
+    String IS_MULTI = "ismulti";
+
+    String ITEM_PIC_NAME = "item_picname";
+
+    String UPDATE_ATTR = "updateatrr";
+
+    String ITEM_TYPE = "item_type";
+
+    String ITEM_URL = "item_url";
+
+    String ITEM_ACCEPT = "item_accept";
+
+    String LEVEL = "level";
+
+    String FILE = "file";
+
+    String CHILD_WIN_KEY = "childwinkey";
+
+    String CHILD_WIN_NAME = "childwinname";
+
+    String CHILD_VIEW_NAME = "childviewname";
+
+    String WINDOW_ID = "window_id";
+
+    String WINDOW_NAME = "window_name";
+
+    String WINDOW_X = "window_x";
+
+    String WINDOW_Y = "window_y";
+
+    String WINDOW_W = "window_w";
+
+    String WINDOW_H = "window_h";
+
+    String WINDOW_DEPTH = "window_depth";
+
+    String WINDOW_UNIQUE_KEY = "window_uniquekey";
+
+    String LOAD_CUST_ALARMS = "load_custalarms";
+
+    String SEQUENCE = "sequence";
+
+    String STATE_EN_NAME = "state_enname";
+
+    String STATE_VALUE = "state_value";
+
+    String STATE_PIC = "state_pic";
+
+    String STATE_CH_NAME = "state_chname";
+
+    String TOOLBAR_EN_NAME = "toolbar_enname";
+
+    String TOOLBAR_CH_NAME = "toolbar_chname";
+
+    String FIELD_NAME = "field_name";
+
+    String FIELD_DESC = "field_desc";
+
+    String USE_TYPE = "usetype";
 }
