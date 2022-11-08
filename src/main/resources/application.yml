@@ -7,3 +7,12 @@ spring:
     url: jdbc:oracle:thin:@(description=(address_list=(address=(host=127.0.0.1)(protocol=tcp)(port=15215)))(connect_data=(service_name=zhwgdb)))
     username: TABLEQUERYMANAGER
     password: jk$sdLT#yx#6354
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+
+logging:
+  level:
+    com:
+      timain:
+        monitor: debug

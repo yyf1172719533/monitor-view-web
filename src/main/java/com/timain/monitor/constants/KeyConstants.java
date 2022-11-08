@@ -207,4 +207,6 @@ public interface KeyConstants {
     String FIELD_DESC = "field_desc";
 
     String USE_TYPE = "usetype";
+
+    String STATE_DESC = "state_desc";
 }

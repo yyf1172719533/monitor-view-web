@@ -19,10 +19,11 @@ public class ColumnDataConvert extends AbstractDataConvert<ColumnVo> {
     /**
      * list数据根据某个属性转换成map
      *
+     * @param key key值
      * @return map集合数据
      */
     @Override
-    public Map<String, List<ColumnVo>> convertDataToMap() {
-        return super.convertDataToMap();
+    public Map<String, List<ColumnVo>> convertDataToMap(String key) {
+        return super.convertDataToMap(key);
     }
 }

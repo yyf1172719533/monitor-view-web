@@ -1,0 +1,29 @@
+package com.timain.monitor.convert;
+
+import com.timain.monitor.pojo.vo.WarnIconVo;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author yyf
+ * @version 1.0
+ * @date 2022/11/7 16:24
+ */
+public class WarnIconDataConvert extends AbstractDataConvert<WarnIconVo> {
+
+    public WarnIconDataConvert(WarnIconVo warnIconVo, List<Map<String, Object>> dataList) {
+        super(warnIconVo, dataList);
+    }
+
+    /**
+     * list数据根据某个属性转换成map
+     *
+     * @param key key值
+     * @return map集合数据
+     */
+    @Override
+    public Map<String, List<WarnIconVo>> convertDataToMap(String key) {
+        return super.convertDataToMap(key);
+    }
+}

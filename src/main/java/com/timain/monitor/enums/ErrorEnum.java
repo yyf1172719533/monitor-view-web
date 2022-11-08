@@ -15,7 +15,8 @@ public enum ErrorEnum {
     EXPORT_MONITOR_ALARM_CITY_ERROR(40005, "导出全省各地市监控告警统计列表失败"),
     QUERY_ALARM_DETAIL_INFO_ERROR(40006, "查询工单详情信息失败"),
     QUERY_RES_INFO_ERROR(40007, "查询告警总流水窗口资源信息失败"),
-    BEAN_CONVERT_TYPE_ERROR(40008, "bean类型转换异常");
+    BEAN_CONVERT_TYPE_ERROR(40008, "bean类型转换异常"),
+    INIT_ALARM_VIEW_DATA_ERROR(40009, "告警窗口页面数据初始化失败");
 
     private final Integer code;
 

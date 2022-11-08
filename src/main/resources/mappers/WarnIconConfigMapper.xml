@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.timain.monitor.mapper.WarnIconConfigMapper">
+
+    <select id="selectWarnIconList" resultType="java.util.Map">
+        select distinct a.state_chname "state_chname",
+                        b.state_desc   "state_desc",
+                        b.state_pic    "state_pic"
+        from ta_statecolumn a, ta_statecolumndesc b
+        where a.state_enname = b.state_enname
+        order by a.state_chname
+    </select>
+</mapper>

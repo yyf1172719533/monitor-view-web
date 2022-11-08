@@ -23,15 +23,15 @@ public class MonitorInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Object userInfo = request.getSession().getAttribute(SysConstants.USER_KEY);
-        if (Objects.isNull(userInfo)) {
-            throw new NoAuthException(ErrorEnum.NO_AUTH);
-        }
-        Map<String, Object> info = DataUtils.parseUserInfo(String.valueOf(userInfo));
-        if (CollectionUtils.isEmpty(info)) {
-            throw new BusinessException(ErrorEnum.PARAM_ERROR);
-        }
-        LoginContext.set(info);
+//        Object userInfo = request.getSession().getAttribute(SysConstants.USER_KEY);
+//        if (Objects.isNull(userInfo)) {
+//            throw new NoAuthException(ErrorEnum.NO_AUTH);
+//        }
+//        Map<String, Object> info = DataUtils.parseUserInfo(String.valueOf(userInfo));
+//        if (CollectionUtils.isEmpty(info)) {
+//            throw new BusinessException(ErrorEnum.PARAM_ERROR);
+//        }
+//        LoginContext.set(info);
         return true;
     }
 

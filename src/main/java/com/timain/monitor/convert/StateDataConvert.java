@@ -19,10 +19,11 @@ public class StateDataConvert extends AbstractDataConvert<StateVo> {
     /**
      * list数据根据某个属性转换成map
      *
+     * @param key key值
      * @return map集合数据
      */
     @Override
-    public Map<String, List<StateVo>> convertDataToMap() {
-        return super.convertDataToMap();
+    public Map<String, List<StateVo>> convertDataToMap(String key) {
+        return super.convertDataToMap(key);
     }
 }

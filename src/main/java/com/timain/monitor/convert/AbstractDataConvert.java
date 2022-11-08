@@ -1,6 +1,5 @@
 package com.timain.monitor.convert;
 
-import com.timain.monitor.constants.KeyConstants;
 import com.timain.monitor.enums.ErrorEnum;
 import com.timain.monitor.exception.BusinessException;
 import com.timain.monitor.pojo.vo.ColumnVo;
@@ -54,10 +53,11 @@ public abstract class AbstractDataConvert<T> {
 
     /**
      * list数据根据某个属性转换成map
+     * @param key key值
      * @return map集合数据
      */
-    protected Map<String, List<T>> convertDataToMap() {
-        return dataList.stream().collect(Collectors.groupingBy(item -> Optional.ofNullable(item.get(KeyConstants.WINDOW_ID)).orElse("").toString()))
+    protected Map<String, List<T>> convertDataToMap(String key) {
+        return dataList.stream().collect(Collectors.groupingBy(item -> Optional.ofNullable(item.get(key)).orElse("").toString()))
                 .entrySet().stream().map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue().stream().map(this::mapToBean).collect(Collectors.toList())))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }

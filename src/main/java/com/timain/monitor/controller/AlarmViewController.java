@@ -38,6 +38,17 @@ public class AlarmViewController {
     @Autowired
     private AlarmViewService alarmViewService;
 
+    @ApiOperation("告警窗口页面初始化数据")
+    @PostMapping("querySheetStatData")
+    public DataResult querySheetStatData(@RequestParam String areaId) {
+        try {
+            return DataResult.buildSuccess("查询成功", alarmViewService.loadSheetStatData(areaId));
+        } catch (Exception e) {
+            LOGGER.error("告警窗口页面初始化数据失败：{}", e.getMessage());
+            throw new BusinessException(ErrorEnum.INIT_ALARM_VIEW_DATA_ERROR);
+        }
+    }
+
     /**
      * 告警窗口页面数据查询
      * @param dto 查询参数

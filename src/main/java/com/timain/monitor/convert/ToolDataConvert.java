@@ -19,10 +19,11 @@ public class ToolDataConvert extends AbstractDataConvert<ToolBarVo> {
     /**
      * list数据根据某个属性转换成map
      *
+     * @param key key值
      * @return map集合数据
      */
     @Override
-    public Map<String, List<ToolBarVo>> convertDataToMap() {
-        return super.convertDataToMap();
+    public Map<String, List<ToolBarVo>> convertDataToMap(String key) {
+        return super.convertDataToMap(key);
     }
 }
