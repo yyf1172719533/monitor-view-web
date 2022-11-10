@@ -33,7 +33,7 @@ public class AlarmSetDto implements Serializable {
      */
     private String ctor;
     private String accLoginName;
-    private List<Map> mks;
+    private List<Map<String, Object>> mks;
     private String monitorViewName;
     private String keyNa;
     private String tab;
@@ -174,11 +174,11 @@ public class AlarmSetDto implements Serializable {
         this.accLoginName = accLoginName;
     }
 
-    public List<Map> getMks() {
+    public List<Map<String, Object>> getMks() {
         return mks;
     }
 
-    public void setMks(List<Map> mks) {
+    public void setMks(List<Map<String, Object>> mks) {
         this.mks = mks;
     }
 

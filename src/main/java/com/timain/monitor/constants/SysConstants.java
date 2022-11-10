@@ -1,7 +1,6 @@
 package com.timain.monitor.constants;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 系统常量
@@ -18,6 +17,20 @@ public final class SysConstants {
     public static final Map<String, String> SPEC_ID_TO_NAME_MAP = new HashMap<>(16);
 
     public static final Map<String, String> SHEET_MAP = new HashMap<>(16);
+
+    public static final List<String> WIN_INFO_LIST = new ArrayList<>();
+
+    public static final List<String> CHILD_WIN_INFO_LIST = new ArrayList<>();
+
+    public static final List<String> DISPLAY_COLUMN_INFO_LIST = new ArrayList<>();
+
+    public static final List<String> STATE_INFO_LIST = new ArrayList<>();
+
+    public static final List<String> PRE_LOAD_INFO_LIST = new ArrayList<>();
+
+    public static final List<String> WIN_FILTER_INFO_LIST = new ArrayList<>();
+
+    public static final List<String> TOOL_BAR_INFO_LIST = new ArrayList<>();
 
     static {
         SPEC_ID_TO_NAME_MAP.put("1", "移动核心网");
@@ -39,5 +52,41 @@ public final class SysConstants {
         SHEET_MAP.put(KeyConstants.CLOSEED_SHEET_COUNT, KeyConstants.CLOSEED_SHEET_COUNT);
         SHEET_MAP.put(KeyConstants.DISPATCHED_SHEET_COUNT, KeyConstants.DISPATCHED_SHEET_COUNT);
         SHEET_MAP.put(KeyConstants.PROCESSING_SHEET_COUNT, KeyConstants.PROCESSING_SHEET_COUNT);
+
+        WIN_INFO_LIST.add(KeyConstants.CREATOR);
+        WIN_INFO_LIST.add(KeyConstants.WINDOW_NAME);
+        WIN_INFO_LIST.add(KeyConstants.WINDOW_DESC);
+        WIN_INFO_LIST.add(KeyConstants.WINDOW_ENABLE);
+        WIN_INFO_LIST.add(KeyConstants.LOAD_CUST_ALARM);
+
+        CHILD_WIN_INFO_LIST.add(KeyConstants.CHILD_WIN_KEY);
+        CHILD_WIN_INFO_LIST.add(KeyConstants.CHILD_WIN_NAME);
+
+        DISPLAY_COLUMN_INFO_LIST.add(KeyConstants.ALL_FN);
+        DISPLAY_COLUMN_INFO_LIST.add(KeyConstants.ALL_FD);
+        DISPLAY_COLUMN_INFO_LIST.add(KeyConstants.AL_FN);
+        DISPLAY_COLUMN_INFO_LIST.add(KeyConstants.SEQ);
+        DISPLAY_COLUMN_INFO_LIST.add(KeyConstants.SEQUENCE);
+
+        STATE_INFO_LIST.add(KeyConstants.ALL_SE);
+        STATE_INFO_LIST.add(KeyConstants.ALL_SC);
+        STATE_INFO_LIST.add(KeyConstants.AL_SE);
+
+        PRE_LOAD_INFO_LIST.add(KeyConstants.PT);
+        PRE_LOAD_INFO_LIST.add(KeyConstants.PP);
+
+        WIN_FILTER_INFO_LIST.add(KeyConstants.RULE_ID);
+        WIN_FILTER_INFO_LIST.add(KeyConstants.RULE_NAME);
+        WIN_FILTER_INFO_LIST.add(KeyConstants.CREATOR_NAME);
+        WIN_FILTER_INFO_LIST.add(KeyConstants.CREATE_TIME_LABEL);
+        WIN_FILTER_INFO_LIST.add(KeyConstants.STARTED);
+        WIN_FILTER_INFO_LIST.add(KeyConstants.STARTED_LABEL);
+        WIN_FILTER_INFO_LIST.add(KeyConstants.IS_PUBLIC);
+        WIN_FILTER_INFO_LIST.add(KeyConstants.IS_PUBLIC_LABEL);
+        WIN_FILTER_INFO_LIST.add(KeyConstants.BINDING);
+
+        TOOL_BAR_INFO_LIST.add(KeyConstants.ALL_TE);
+        TOOL_BAR_INFO_LIST.add(KeyConstants.ALL_TC);
+        TOOL_BAR_INFO_LIST.add(KeyConstants.AL_TE);
     }
 }

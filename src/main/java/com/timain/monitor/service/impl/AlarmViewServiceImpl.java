@@ -70,9 +70,65 @@ public class AlarmViewServiceImpl implements AlarmViewService {
     }
 
     /**
+     * 查询工单统计明细【未选择时间】
+     *
+     * @param areaId    areaId
+     * @param spec      spec
+     * @param sheetType sheetType
+     * @return 工单统计明细
+     */
+    @Override
+    public List<Map<String, Object>> loadSheetDetailData(String areaId, String spec, String sheetType) {
+        List<CityVo> regionList = alarmViewMapper.getAreaRegionList(areaId);
+        Map<String, Object> cityMap = Maps.newHashMap();
+        StringBuilder sb = new StringBuilder();
+        regionList.forEach(item -> {
+            if (item.getCityLayer() != 1) {
+                sb.append(",").append(item.getCityId());
+                cityMap.put(item.getCityId(), item.getCityName());
+            } else {
+                sb.append(",all");
+                cityMap.put("all", "全省");
+            }
+        });
+        String cityStr = sb.substring(1);
+        Map<String, Object> nodeAttr = Maps.newHashMap();
+        nodeAttr.put(KeyConstants.CITY_ID, cityStr);
+        nodeAttr.put(KeyConstants.SPECIALTY, spec);
+
+        Map<String, Map<String, Object>> param = Maps.newHashMap();
+        param.put(KeyConstants.NODE_ATTRS, nodeAttr);
+
+        Map<String, List<Map<String, Object>>> data;
+        try {
+            data = corbaMsgSupport.sendAndRecvMsg(TopicConstants.SHEET_DETAIL_STATISTIC, param);
+            List<Map<String, Object>> mapList = data.get(KeyConstants.SUB_NODES);
+            return mapList.stream().map(item -> {
+                Map<String, Object> nodeAttrMap = (Map<String, Object>) item.get(KeyConstants.NODE_ATTRS);
+                String cityId = String.valueOf(nodeAttrMap.get(KeyConstants.CITY_ID));
+                String specId = String.valueOf(nodeAttrMap.get(KeyConstants.SPECIALTY));
+                Map<String, Object> map = Maps.newHashMap();
+                map.put("specName", SysConstants.SPEC_ID_TO_NAME_MAP.get(specId));
+                map.put("cityName", cityMap.get(cityId));
+                if (KeyConstants.DISPATCHED_SHEET_COUNT.equals(sheetType)) {
+                    map.put(KeyConstants.NUM, String.valueOf(nodeAttrMap.get(KeyConstants.DISPATCHED_SHEET_COUNT)));
+                } else if (KeyConstants.PROCESSING_SHEET_COUNT.equals(sheetType)) {
+                    map.put(KeyConstants.NUM, String.valueOf(nodeAttrMap.get(KeyConstants.PROCESSING_SHEET_COUNT)));
+                } else if (KeyConstants.CLOSEED_SHEET_COUNT.equals(sheetType)) {
+                    map.put(KeyConstants.NUM, String.valueOf(nodeAttrMap.get(KeyConstants.CLOSEED_SHEET_COUNT)));
+                }
+                return map;
+            }).collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error("send and receive msg error: {}", e.getMessage());
+            throw new BusinessException(ErrorEnum.CORBA_TOPIC_MSG_ERROR);
+        }
+    }
+
+    /**
      * 查询所有全专业告警概况信息
      *
-     * @param dto    查询参数
+     * @param dto 查询参数
      * @return 告警概况信息
      */
     @Override
@@ -227,7 +283,7 @@ public class AlarmViewServiceImpl implements AlarmViewService {
             dataMap = corbaMsgSupport.sendAndRecvMsg(TopicConstants.SHEET_STAT, params);
         } catch (Exception e) {
             LOGGER.error("send and receive msg error: {}", e.getMessage());
-            throw new BusinessException(ErrorEnum.TOPIC_MSG_ERROR);
+            throw new BusinessException(ErrorEnum.CORBA_TOPIC_MSG_ERROR);
         }
         List<Map<String, Object>> mapList = dataMap.get(KeyConstants.SUB_NODES);
         List<Map<String, Object>> resultList = Lists.newArrayList();
@@ -304,7 +360,7 @@ public class AlarmViewServiceImpl implements AlarmViewService {
      * 统计
      *
      * @param dataList 数据
-     * @param flag 标识
+     * @param flag     标识
      */
     @Override
     public void setTotalData(List<Map<String, Object>> dataList, boolean flag) {

@@ -55,7 +55,7 @@ public class AlarmTotalFlowServiceImpl implements AlarmTotalFlowService {
         String account = dto.getAccount();
         String moduleKey = dto.getModuleKey();
         String viewId = dto.getViewId();
-        List<Map<String, Object>> mapList = null;
+        List<Map<String, Object>> mapList;
         // 视图ID不为空则根据视图ID查询
         if (StringUtils.isNotBlank(viewId)) {
             mapList = alarmTotalFlowMapper.selectUserViewByViewId(viewId, moduleKey);

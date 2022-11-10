@@ -1,5 +1,293 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.timain.monitor.mapper.AlarmSetMapper">
+    <insert id="insertView">
+        insert into ta_viewdef(view_id, view_name, monitor_viewname, creator, windownum, ispublic, create_time)
+        values (#{viewId}, #{dto.viewName}, #{dto.monitorViewName}, #{dto.creator}, #{dto.windowNum}, #{dto.isPublic},
+                #{dto.createTime})
+    </insert>
 
+    <insert id="insertViewChoose">
+        insert into ta_viewchoose(acc_loginname, monitor_viewname, view_id)
+        values (#{creator}, #{monitorViewName}, #{viewId})
+    </insert>
+
+    <insert id="savePreLoad">
+        insert into ta_preload(view_id, window_id, preload_type, preload_para)
+        values (#{viewId}, #{windowId}, #{dto.preloadType}, #{dto.preloadPara})
+    </insert>
+
+    <insert id="insertViewWin">
+        insert into ta_viewwindef(window_id, window_name, window_uniquekey, window_desc, view_id, childviewname,
+                                  window_enable, load_custalarm)
+        values (#{windowId}, #{dto.windowName}, #{dto.windowUniqueKey}, #{dto.windowDesc}, #{viewId},
+                #{dto.childViewName},
+                #{dto.windowEnable}, #{dto.loadCustAlarm})
+    </insert>
+
+    <insert id="insertViewDef">
+        insert into ta_viewdef(monitor_viewname, creator, view_id, windownum, ispublic, create_time)
+        values (#{dto.monitorViewName}, #{dto.creator}, viewId, #{dto.windowNum}, #{dto.isPublic}, #{dto.createTime})
+    </insert>
+
+    <insert id="insertViewWinDef">
+        insert into ta_viewwindef(window_id, window_name, window_uniquekey, window_desc, view_id, childviewname,
+                                  window_enable)
+        values (#{windowId}, #{dto.windowName}, #{dto.windowUniqueKey}, #{dto.windowDesc}, #{viewId},
+                #{dto.childViewName}, #{dto.windowEnable})
+    </insert>
+
+    <update id="saveShowColumns">
+        ${sql}
+    </update>
+
+    <update id="saveAlarmState">
+        ${sql}
+    </update>
+
+    <update id="saveToolbars">
+        ${sql}
+    </update>
+
+    <update id="saveFilter">
+        ${sql}
+    </update>
+
+    <delete id="deleteWinConfigure">
+        delete
+        from ta_viewwindef
+        where window_id = #{windowId}
+    </delete>
+
+    <delete id="deleteConfigureByWindowId">
+        delete
+        from ${tableName}
+        where window_id = #{windowId}
+    </delete>
+
+    <select id="selectFunctionList" resultType="java.util.Map">
+        select monitor_viewname as mk, descr
+        from ta_viewmain
+    </select>
+
+    <select id="selectWinByCreator" resultType="java.util.Map">
+        select a.monitor_viewname as m_k,
+               a.view_id          as v_id,
+               b.window_id        as w_id,
+               b.window_name      as w_name,
+               b.window_uniquekey as w_uk
+        from ta_viewdef a,
+             ta_viewwindef b
+        where a.view_id = b.view_id
+          and a.creator = #{creator}
+          and a.monitor_viewname = #{monitorViewName}
+        order by b.window_id
+    </select>
+
+    <select id="selectCountWin" resultType="java.lang.Integer">
+        select count(1)
+        from ta_viewdef a,
+             ta_viewwindef b
+        where a.view_id = b.view_id
+          and a.creator = #{creator}
+          and a.monitor_viewname = #{monitorViewName}
+          and b.window_id = #{windowId}
+    </select>
+
+    <select id="selectDefaultViewAndWin" resultType="java.util.Map">
+        select t1.view_id as "view_id", t2.window_id as "window_id"
+        from ta_viewdef t1,
+             ta_viewwindef t2
+        where t1.view_id = t2.view_id
+          and t1.creator = #{creator}
+          and t1.monitor_viewname = #{monitorViewName}
+    </select>
+
+    <select id="selectWinInfo" resultType="java.util.Map">
+        select b.creator,
+               a.window_id,
+               a.window_name,
+               a.window_uniquekey,
+               a.window_desc,
+               a.view_id,
+               a.childviewname,
+               a.window_enable,
+               a.load_custalarm
+        from ta_viewwindef a,
+             ta_viewdef b
+        where a.view_id = b.view_id
+          and a.view_id = #{viewId}
+          and a.window_id = #{windowId}
+    </select>
+
+    <select id="selectDefaultChildWinList" resultType="java.util.Map">
+        select monitor_viewname as "monitor_viewname",
+               childwinkey      as "childwinkey",
+               childwinname     as "childwinname",
+               required         as "required"
+        from ta_modchildwintype
+        where monitor_viewname = #{monitorViewName}
+        order by childwinname
+    </select>
+
+    <select id="selectShowColumns" resultType="java.util.Map">
+        select t.field_name as all_fn,
+               t.field_desc as all_fd,
+               z.field_name as al_fn,
+               t.seq,
+               z.sequence
+        from (select x.* from ta_itemcolumn x where x.usetype = 0 and x.monitor_viewname = #{monitorViewName}) t
+                 left join (
+            select y.*
+            from ta_displaycolumn y
+            where y.monitor_viewname = #{monitorViewName}
+              and y.view_id = #{viewId}
+              and y.window_id = #{windowId}
+              and y.usetype = 0) z
+                           on t.field_name = z.field_name
+        order by t.seq, z.sequence asc
+    </select>
+
+    <select id="selectStatus" resultType="java.util.Map">
+        select x.state_enname as all_se, x.state_chname as all_sc, z.state_enname as al_se
+        from ta_statecolumn x
+                 left join (select y.*
+                            from ta_state_usrdef y
+                            where y.window_id = #{windowId}
+                              and y.view_id = #{viewId}) z
+                           on x.state_enname = z.state_enname
+        order by z.sequence asc
+    </select>
+
+    <select id="selectPreInstall" resultType="java.util.Map">
+        select preload_type as pt, preload_para as pp
+        from ta_preload
+        where view_id = #{viewId}
+          and window_id = #{windowId}
+    </select>
+
+    <select id="selectFilter" resultType="java.util.Map">
+        select rule_id, rule_name, creator_name, create_time, started, ispublic
+        from ta_alarm_customrule
+        where rule_id in (
+            select distinct t.rule_id
+            from ta_alarm_customrule t
+            where (creator_name = ? or ispublic = 1)
+              and modulename = '告警'
+        )
+        order by create_time desc
+    </select>
+
+    <select id="selectRuleIdByViewIdAndWindowId" resultType="java.lang.String">
+        select rule_id
+        from ta_windowfilter
+        where view_id = #{viewId}
+          and window_id = #{windowId}
+    </select>
+
+    <select id="selectToolBar" resultType="java.util.Map">
+        select x.toolbar_enname as all_te, x.toolbar_chname as all_tc, z.toolbar_enname as al_te
+        from ta_toobar x
+                 left join
+             (select y.* from ta_toolbardef y where y.window_id = #{windowId} and y.view_id = #{viewId}) z
+             on x.toolbar_enname = z.toolbar_enname
+        order by z.sequence asc
+    </select>
+
+    <select id="selectFilterRuleByRuleId" resultType="java.util.Map">
+        <![CDATA[
+        select rule_id      as "rule_id",
+               rule_name    as "rule_name",
+               creator_name as "creator",
+               create_time  as "create_time",
+               rule_context as "rule_context",
+               started      as "started",
+               ispublic     as "ispublic",
+               modulename   as "modulename",
+               ruledesc     as "rule_context_desc"
+        from ta_alarm_customrule
+        where rule_id = #{ruleId}
+        ]]>
+    </select>
+
+    <select id="querySupportWarnFields" resultType="com.timain.monitor.pojo.Field">
+        <![CDATA[
+        select field_label      as "fieldDesCr",
+               field_code       as "fieldCode",
+               field_type       as "fieldType",
+               field_datasource as "fieldRs",
+               field_dbsql      as "fieldSql",
+               field_valuelist  as "fieldFixed",
+               oper             as "fieldOper",
+               show_field       as "fieldShow",
+               save_field       as "fieldSave"
+        from ta_alarm_rulefield
+        ]]>
+    </select>
+
+    <select id="queryNodesByFieldSql" resultType="com.timain.monitor.pojo.vo.NodeVo">
+        ${sql}
+    </select>
+
+    <select id="selectViewIdByMonitorViewName" resultType="java.lang.String">
+        select view_id
+        from ta_viewdef
+        where creator = #{creator}
+        and monitor_viewname = #{monitorViewName}
+        <if test="null != viewId and viewId > 0">
+            and view_id = #{viewId}
+        </if>
+    </select>
+
+    <select id="selectMaxViewId" resultType="java.lang.String">
+        select nvl(max(view_id), 0) + 1
+        from ta_viewdef
+    </select>
+
+    <select id="selectCountViewByMonitorViewName" resultType="java.lang.Integer">
+        select count(*)
+        from ta_viewchoose
+        where acc_loginname = #{creator}
+          and monitor_viewname = #{monitorViewName}
+    </select>
+
+    <select id="selectViewIdAndWindowId" resultType="java.util.Map">
+        select a.view_id, b.window_id
+        from ta_viewdef a,
+             ta_viewwindef b
+        where a.view_id = b.view_id
+          and a.creator = #{creator}
+          and a.monitor_viewname = #{monitorViewName}
+    </select>
+
+    <select id="selectMaxWindowId" resultType="java.lang.Integer">
+        select nvl(max(window_id), 0) + 1
+        from ta_viewwindef
+    </select>
+
+    <select id="selectWinConfig" resultType="java.util.Map">
+        select a.view_id, b.window_id, b.window_uniquekey
+        from ta_viewdef a,
+             ta_viewwindef b
+        where a.view_id = b.view_id
+          and a.creator = #{creator}
+          and a.monitor_viewname = #{monitorViewName}
+          and b.window_uniquekey = #{windowUniqueKey}
+    </select>
+
+    <select id="selectWindowNameByWindowUniqueKey" resultType="java.util.Map">
+        select window_name, window_desc, childviewname
+        from ta_viewwindef
+        where window_uniquekey = #{windowUniqueKey}
+          and view_id = 20
+    </select>
+
+    <select id="selectWindowNameAndChildViewName" resultType="java.util.Map">
+        select b.window_name, b.childviewname
+        from ta_viewdef a,
+             ta_viewwindef b
+        where a.view_id = b.view_id
+          and a.creator = '-1'
+          and a.monitor_viewname = #{monitorViewName}
+    </select>
 </mapper>

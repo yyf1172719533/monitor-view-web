@@ -174,6 +174,12 @@ public interface KeyConstants {
 
     String WINDOW_NAME = "window_name";
 
+    String WINDOW_DESC = "window_desc";
+
+    String WINDOW_ENABLE = "window_enable";
+
+    String LOAD_CUST_ALARM = "load_custalarm";
+
     String WINDOW_X = "window_x";
 
     String WINDOW_Y = "window_y";
@@ -209,4 +215,64 @@ public interface KeyConstants {
     String USE_TYPE = "usetype";
 
     String STATE_DESC = "state_desc";
+
+    String MK = "mk";
+
+    String CONFIG = "config";
+
+    String DEFAULT_CV_LIST = "default_cvList";
+
+    String CV_LIST = "cvList";
+
+    String REQUIRED = "required";
+
+    String RULE_ID = "rule_id";
+
+    String RULE_NAME = "rule_name";
+
+    String CREATOR_NAME = "creator_name";
+
+    String BINDING = "binding";
+
+    String CREATE_TIME = "create_time";
+
+    String CREATE_TIME_LABEL = "create_time_label";
+
+    String STARTED = "started";
+
+    String STARTED_LABEL = "started_label";
+
+    String IS_PUBLIC = "ispublic";
+
+    String IS_PUBLIC_LABEL = "ispublic_label";
+
+    String ALL_FN = "all_fn";
+
+    String ALL_FD = "all_fd";
+
+    String AL_FN = "al_fn";
+
+    String SEQ = "seq";
+
+    String ALL_SE = "all_se";
+
+    String ALL_SC = "all_sc";
+
+    String AL_SE = "al_se";
+
+    String PT = "pt";
+
+    String PP = "pp";
+
+    String ALL_TE = "all_te";
+
+    String ALL_TC = "all_tc";
+
+    String AL_TE = "al_te";
+
+    String CV = "cv";
+
+    String DCV = "dcv";
+
+    String RULE_CONTEXT = "rule_context";
 }

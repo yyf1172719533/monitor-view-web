@@ -1,26 +1,38 @@
 package com.timain.monitor.utils;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linkage.system.utils.database.DBUtil;
+import com.timain.monitor.constants.Const;
 import com.timain.monitor.constants.KeyConstants;
+import com.timain.monitor.pojo.dto.AlarmSetDto;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.sql.Clob;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author yyf
  * @version 1.0
  * @date 2022/11/3 20:30
  */
+@SuppressWarnings({"all"})
 public abstract class DataUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataUtils.class);
+
+    private static final Pattern CWK_PATTERN = Pattern.compile(Const.CWK_PATTERN);
 
     public static Map<String, Object> parseUserInfo(String userInfo) {
         if (StringUtils.isBlank(userInfo)) {
@@ -30,11 +42,13 @@ public abstract class DataUtils {
         if (!isJson) {
             return Maps.newHashMap();
         }
-        return JSONObject.parseObject(userInfo, new TypeReference<Map<String, Object>>(){});
+        return JSONObject.parseObject(userInfo, new TypeReference<Map<String, Object>>() {
+        });
     }
 
     /**
      * 判断字符串是否是json字符串
+     *
      * @param str 字符串
      * @return true：是 false：否
      */
@@ -191,5 +205,121 @@ public abstract class DataUtils {
                 break;
         }
         return returnMap;
+    }
+
+    public static void setKey(AlarmSetDto dto) {
+        // 设置各Tab页关键字
+        dto.setKeyNa(Const.NA);
+        dto.setKeyWi(Const.KEY_WI);
+        dto.setKeyCw(Const.KEY_CW);
+        dto.setKeyDs(Const.KEY_DS);
+        dto.setKeyAs(Const.KEY_AS);
+        dto.setKeyPl(Const.KEY_PL);
+        dto.setKeyF(Const.KEY_F);
+        dto.setKeyTb(Const.KEY_TB);
+        dto.setKeyWiLabel(Const.KEY_WI_LABEL);
+        dto.setKeyCwLabel(Const.KEY_CW_LABEL);
+        dto.setKeyDsLabel(Const.KEY_DS_LABEL);
+        dto.setKeyAsLabel(Const.KEY_AS_LABEL);
+        dto.setKeyPlLabel(Const.KEY_PL_LABEL);
+        dto.setKeyFLabel(Const.KEY_F_LABEL);
+        dto.setKeyTbLabel(Const.KEY_TB_LABEL);
+        dto.setdCmk(Const.MODULE_KEYS.toString());
+    }
+
+    public static void setChildWin(Map<String, Object> winInfo, List<Map<String, Object>> childWinList) {
+        winInfo.put(KeyConstants.DEFAULT_CV_LIST, childWinList);
+        Map<String, Object> childWinMap = Maps.newHashMap();
+        childWinList.forEach(item -> childWinMap.put(String.valueOf(item.get(KeyConstants.CHILD_WIN_KEY)), item.get(KeyConstants.CHILD_WIN_NAME)));
+
+        boolean b = winInfo.containsKey(KeyConstants.CHILD_VIEW_NAME)
+                && !StringUtil.empty(winInfo.get(KeyConstants.CHILD_VIEW_NAME))
+                && CWK_PATTERN.matcher(String.valueOf(winInfo.get(KeyConstants.CHILD_VIEW_NAME))).matches();
+        if (b) {
+            List<String> cskList = Arrays.stream(winInfo.get(KeyConstants.CHILD_VIEW_NAME).toString().split(Const.CA)).collect(Collectors.toList());
+            // 删除默认子窗口列表中已经配置的子窗口
+            childWinList.removeIf(next -> cskList.contains(String.valueOf(next.get(KeyConstants.CHILD_WIN_KEY))));
+            // 组装已经配置的子窗口列表
+            List<Map<String, Object>> mapList = cskList.stream().map(e -> {
+                Map<String, Object> map = Maps.newHashMap();
+                map.put(KeyConstants.CHILD_WIN_KEY, e);
+                map.put(KeyConstants.CHILD_WIN_NAME, childWinMap.get(e));
+                return map;
+            }).collect(Collectors.toList());
+            winInfo.put(KeyConstants.CV_LIST, mapList);
+            return;
+        }
+        // 将必选的子窗口放入已配置的列表中
+        List<Map<String, Object>> cvList = Lists.newArrayList();
+        Iterator<Map<String, Object>> iterator = childWinList.iterator();
+        while (iterator.hasNext()) {
+            Map<String, Object> next = iterator.next();
+            if ("1".equals(String.valueOf(next.get(KeyConstants.REQUIRED)))) {
+                cvList.add(Maps.newHashMap(next));
+                iterator.remove();
+            }
+        }
+        winInfo.put(KeyConstants.CV_LIST, cvList);
+    }
+
+    public static List<Map<String, Object>> buildNewList(List<Map<String, Object>> mapList, List<String> keys) {
+        if (CollectionUtil.isEmpty(mapList)) {
+            return Collections.singletonList(Maps.newHashMap());
+        }
+        return mapList.stream().map(item -> {
+            Map<String, Object> map = Maps.newHashMap();
+            keys.forEach(key -> map.put(key, item.get(key)));
+            return map;
+        }).collect(Collectors.toList());
+    }
+
+    public static Map<String, Object> buildNewMap(Map<String, Object> data, List<String> keys) {
+        Map<String, Object> map = Maps.newHashMap();
+        map.put(KeyConstants.CV, buildNewList((List<Map<String, Object>>) data.get(KeyConstants.CV_LIST), keys));
+        map.put(KeyConstants.DCV, buildNewList((List<Map<String, Object>>) data.get(KeyConstants.DEFAULT_CV_LIST), keys));
+        return map;
+    }
+
+    public static String parseData(Map<String, Object> rule) {
+        if (CollectionUtil.isEmpty(rule)) {
+            return StringUtils.EMPTY;
+        }
+        if (2 == DBUtil.getDbType()) {
+            return parseClob((Clob) rule.get(KeyConstants.RULE_CONTEXT));
+        }
+        return String.valueOf(rule.get(KeyConstants.RULE_CONTEXT));
+    }
+
+    public static String parseClob(Clob clob) {
+        StringBuilder builder = new StringBuilder();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(clob.getCharacterStream());
+            char[] c = new char[1024];
+            int i = 0;
+            while ((i = reader.read(c)) != -1) {
+                builder.append(c, 0, i);
+            }
+        } catch (SQLException | IOException throwables) {
+            throwables.printStackTrace();
+            LOGGER.error("parse clob data error: {}", throwables.getMessage());
+        } finally {
+            if (null != reader) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return builder.toString();
+    }
+
+    public static String replaceSQ(String s) {
+        return s.replaceAll("\'", "\\\\'");
+    }
+
+    public static String replaceQS(String s) {
+        return s.replaceAll("\\\\'", "\'");
     }
 }

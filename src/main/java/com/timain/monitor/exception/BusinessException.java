@@ -18,6 +18,11 @@ public class BusinessException extends RuntimeException {
         this.code = errorEnum.getCode();
     }
 
+    public BusinessException(String message, Integer code) {
+        super(message);
+        this.code = code;
+    }
+
     public Integer getCode() {
         return code;
     }

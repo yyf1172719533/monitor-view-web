@@ -38,7 +38,7 @@ public class AlarmViewController {
     @Autowired
     private AlarmViewService alarmViewService;
 
-    @ApiOperation("告警窗口页面初始化数据")
+    @ApiOperation("告警窗口页面初始化数据【未选择时间】")
     @PostMapping("querySheetStatData")
     public DataResult querySheetStatData(@RequestParam String areaId) {
         try {
@@ -54,14 +54,20 @@ public class AlarmViewController {
      * @param dto 查询参数
      * @return 全专业告警概况表[当日告警]、全省各地市监控告警统计列表[活动全部]
      */
-    @ApiOperation("告警窗口页面数据查询")
+    @ApiOperation("告警窗口页面数据查询【已选择时间】")
     @PostMapping("querySpecGeneralAlarmStatByDate")
     public DataResult querySpecGeneralAlarmStatByDate(@RequestBody AlarmViewDto dto) {
         Map<String, Object> params = BeanUtil.beanToMap(dto);
         return DataResult.buildSuccess("查询成功", alarmViewService.loadSpecGeneralAlarmStatByDate(params));
     }
 
-    @ApiOperation("已派发工单数、在途工单数、已关闭工单数等工单统计明细查看")
+    @ApiOperation("已派发工单数、在途工单数、已关闭工单数等工单统计明细查看【未选择时间】")
+    @PostMapping("querySheetDetailData")
+    public DataResult querySheetDetailData(@RequestParam String areaId, @RequestParam String spec, @RequestParam String sheetType) {
+        return DataResult.buildSuccess("查询成功", alarmViewService.loadSheetDetailData(areaId, spec, sheetType));
+    }
+
+    @ApiOperation("已派发工单数、在途工单数、已关闭工单数等工单统计明细查看【已选择时间】")
     @PostMapping("querySheetDetailDataByDate")
     public DataResult querySheetDetailDataByDate(@RequestBody AlarmDetailDto dto) {
         return DataResult.buildSuccess("查询成功", alarmViewService.loadSheetDetailDataByDate(dto));
